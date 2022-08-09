@@ -1,6 +1,6 @@
 terraform {
   cloud {
-    organization = "keinuma-org"
+    organization = "keinuma"
     workspaces {
       name = "sample-workspace"
     }
@@ -19,15 +19,9 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-resource "aws_ecr_repository" "api" {
-  name                 = "${var.product_name}_sample"
-  image_tag_mutability = "MUTABLE"
+module "server" {
+    source = "./server"
 
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-
-  image_scanning_configuration {
-    scan_on_push = "true"
-  }
+    product_name = var.product_name
+    environment  = var.environment
 }
