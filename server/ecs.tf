@@ -47,9 +47,18 @@ resource "aws_ecs_cluster" "api_cluster" {
 }
 
 resource "aws_ecs_service" "api_service" {
-  name        = "${var.product_name}-api"
-  cluster     = aws_ecs_cluster.api_cluster.id
-  launch_type = "FARGATE"
+  name                   = "${var.product_name}-api"
+  cluster                = aws_ecs_cluster.api_cluster.id
+  launch_type            = "FARGATE"
+  enable_execute_command = true
+  platform_version       = "1.4.0"
+  desired_count          = 1
+
+  task_definition = aws_ecs_task_definition.api_task_definition.arn
+
+  lifecycle {
+    ignore_changes = [desired_count, task_definition]
+  }
 
   tags = {
     "environment" = var.environment
