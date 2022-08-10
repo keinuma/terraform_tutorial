@@ -12,6 +12,6 @@ resource "aws_ecr_repository" "api" {
 
   tags = {
     "environment" = var.environment
-    "product"  = var.product_name
+    "product"     = var.product_name
   }
 }
