@@ -1,4 +1,31 @@
 ######################
+# Subnet
+######################
+data "aws_subnet_ids" "default" {
+  vpc_id = aws_default_vpc.default.id
+}
+
+######################
+# Security Group
+######################
+resource "aws_security_group" "api_security_group" {
+  name = "${var.product_name}_api_security_group"
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port       = "3000"
+    to_port         = "3000"
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+}
+
+######################
 # IAM Role
 ######################
 data "aws_iam_policy_document" "ecs_task_role_assume_policy" {
@@ -55,6 +82,12 @@ resource "aws_ecs_service" "api_service" {
   desired_count          = 1
 
   task_definition = aws_ecs_task_definition.api_task_definition.arn
+
+  network_configuration {
+    assign_public_ip = true
+    security_groups  = [aws_security_group.api_security_group]
+    subnets          = data.aws_subnet_ids.default.ids
+  }
 
   lifecycle {
     ignore_changes = [desired_count, task_definition]
