@@ -1,3 +1,5 @@
+data "aws_caller_identity" "me" {}
+
 ######################
 # IAM Role
 ######################
@@ -9,6 +11,18 @@ data "aws_iam_policy_document" "ecs_task_role_assume_policy" {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
+  }
+
+  statement {
+    sid = "SSMSessionManagerPermissions"
+    actions = [
+      "ssm:GetParameters",
+      "secretsmanager:GetSecretValue",
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:ssm:ap-northeast-1:${data.aws_caller_identity.me.account_id}:parameter/${var.product_name}/api/*"
+    ]
   }
 }
 resource "aws_iam_role" "api_ecs_task_execution_role" {
