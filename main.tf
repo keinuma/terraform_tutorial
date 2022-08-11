@@ -22,6 +22,7 @@ provider "aws" {
 module "server" {
   source = "./server"
 
-  product_name = var.product_name
-  environment  = var.environment
+  product_name     = var.product_name
+  environment      = var.environment
+  root_domain_name = var.root_domain_name
 }
