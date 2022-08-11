@@ -35,6 +35,13 @@ resource "aws_iam_role" "api_ecs_task_role" {
 }
 
 ######################
+# Cloudwatch
+######################
+resource "aws_cloudwatch_log_group" "main_log_group" {
+  name = "/ecs/app"
+}
+
+######################
 # ECS
 ######################
 resource "aws_ecs_cluster" "api_cluster" {
@@ -101,7 +108,7 @@ resource "aws_ecs_task_definition" "api_task_definition" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group" : "/ecs/app",
+          "awslogs-group" : "${aws_cloudwatch_log_group.main_log_group.name}",
           "awslogs-region" : "ap-northeast-1",
           "awslogs-stream-prefix" : "${var.product_name}-api"
         }
