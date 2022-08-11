@@ -12,18 +12,6 @@ data "aws_iam_policy_document" "ecs_task_role_assume_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
-
-  statement {
-    sid = "SSMSessionManagerPermissions"
-    actions = [
-      "ssm:GetParameters",
-      "secretsmanager:GetSecretValue",
-    ]
-    effect = "Allow"
-    resources = [
-      "arn:aws:ssm:ap-northeast-1:${data.aws_caller_identity.me.account_id}:parameter/${var.product_name}/api/*"
-    ]
-  }
 }
 resource "aws_iam_role" "api_ecs_task_execution_role" {
   name               = "${var.product_name}-ApiTaskExecutionRole"
