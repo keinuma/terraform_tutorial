@@ -28,15 +28,39 @@ data "aws_iam_policy_document" "ecs_task_role_assume_policy" {
 resource "aws_iam_role" "api_ecs_task_execution_role" {
   name               = "${var.product_name}-ApiTaskExecutionRole"
   assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_policy.json
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+    aws_iam_policy.api_parameters_policy.arn
+  ]
+
   tags = {
     "environment" = var.environment
     "product"     = var.product_name
   }
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
-  role       = aws_iam_role.api_ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+resource "aws_iam_policy" "api_parameters_policy" {
+  name   = "${var.product_name}-ApiParamsPolicy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.api_parameters_permissions.json
+
+  tags = {
+    "environment" = var.environment
+    "product"     = var.product_name
+  }
+}
+data "aws_iam_policy_document" "api_parameters_permissions" {
+  statement {
+    sid = "SSMSessionManagerPermissions"
+    actions = [
+      "ssm:GetParameters",
+      "secretsmanager:GetSecretValue",
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.me.account_id}:parameter/${var.product_name}/api/*"
+    ]
+  }
 }
 
 resource "aws_iam_role" "api_ecs_task_role" {
