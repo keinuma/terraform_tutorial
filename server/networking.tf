@@ -57,7 +57,7 @@ resource "aws_security_group" "alb_security_group" {
 }
 
 resource "aws_security_group" "api_security_group" {
-  name   = "${var.product_name}_alb_security_group"
+  name   = "${var.product_name}_api_security_group"
   vpc_id = module.vpc.vpc_id
 
   ingress {
