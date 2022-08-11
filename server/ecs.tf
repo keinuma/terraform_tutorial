@@ -64,8 +64,8 @@ resource "aws_ecs_service" "api_service" {
   task_definition = aws_ecs_task_definition.api_task_definition.arn
 
   load_balancer {
-    container_name = "app"
-    container_port = "3000"
+    container_name   = "app"
+    container_port   = "3000"
     target_group_arn = aws_alb_target_group.main_alb_target_group.arn
   }
 

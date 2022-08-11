@@ -2,6 +2,8 @@ variable "environment" {}
 
 variable "product_name" {}
 
+variable "root_domain_name" {}
+
 variable "public_subnet_cidr_blocks" {
   description = "Available cidr blocks for public subnets"
   type        = list(string)

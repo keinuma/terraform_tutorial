@@ -8,3 +8,8 @@ variable "product_name" {
   description = "Application Name"
   default     = "terraform_starter"
 }
+
+variable "root_domain_name" {
+  type        = string
+  description = "Domain name for root"
+}
