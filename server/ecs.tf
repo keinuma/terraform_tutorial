@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "api_parameters_permissions" {
     ]
     effect = "Allow"
     resources = [
-      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.me.account_id}:parameter/${var.product_name}/api/*"
+      "arn:aws:ssm:ap-northeast-1:${data.aws_caller_identity.me.account_id}:parameter/${var.product_name}/api/*"
     ]
   }
 }
