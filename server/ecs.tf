@@ -1,31 +1,4 @@
 ######################
-# Subnet
-######################
-data "aws_subnet_ids" "default" {
-  vpc_id = aws_default_vpc.default.id
-}
-
-######################
-# Security Group
-######################
-resource "aws_security_group" "api_security_group" {
-  name = "${var.product_name}_api_security_group"
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port       = "3000"
-    to_port         = "3000"
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
-  }
-}
-
-######################
 # IAM Role
 ######################
 data "aws_iam_policy_document" "ecs_task_role_assume_policy" {
@@ -83,10 +56,16 @@ resource "aws_ecs_service" "api_service" {
 
   task_definition = aws_ecs_task_definition.api_task_definition.arn
 
+  load_balancer {
+    container_name = "app"
+    container_port = "3000"
+    target_group_arn = aws_alb_target_group.main_alb_target_group.arn
+  }
+
   network_configuration {
     assign_public_ip = true
-    security_groups  = [aws_security_group.api_security_group]
-    subnets          = data.aws_subnet_ids.default.ids
+    security_groups  = [aws_security_group.api_security_group.id]
+    subnets          = module.vpc.public_subnets
   }
 
   lifecycle {
