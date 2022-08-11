@@ -57,7 +57,7 @@ resource "aws_security_group" "alb_security_group" {
 }
 
 resource "aws_security_group" "api_security_group" {
-  name   = "${var.product_name}_api_security_group"
+  name   = "${var.product_name}_alb_security_group"
   vpc_id = module.vpc.vpc_id
 
   ingress {
@@ -98,8 +98,10 @@ resource "aws_alb" "main_alb" {
 
 resource "aws_alb_listener" "main_alb_listner" {
   load_balancer_arn = aws_alb.main_alb.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+
+  certificate_arn = aws_acm_certificate.api_acm_certifacate.arn
 
   default_action {
     type             = "forward"
