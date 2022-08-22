@@ -69,8 +69,8 @@ resource "aws_db_subnet_group" "main_db_subnet_group" {
 
 resource "aws_rds_cluster" "main_db_cluster" {
   engine         = "aurora-mysql"
-  engine_mode    = "serverless"
-
+  engine_mode    = "provisioned"
+  engine_version = "8.0.mysql_aurora.3.02.0"
   database_name   = "rails_tutorial"
   master_username = "rails"
   master_password = random_password.main_db_password.result
@@ -106,7 +106,7 @@ resource "aws_rds_cluster_instance" "main_db_instance" {
   engine               = aws_rds_cluster.main_db_cluster.engine
   engine_version       = aws_rds_cluster.main_db_cluster.engine_version
   cluster_identifier   = aws_rds_cluster.main_db_cluster.id
-  instance_class       = "db.t4g.micro"
+  instance_class       = "db.serverless"
   db_subnet_group_name = aws_db_subnet_group.main_db_subnet_group.name
   publicly_accessible  = false
 }
