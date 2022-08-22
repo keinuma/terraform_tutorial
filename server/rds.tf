@@ -57,6 +57,16 @@ resource "aws_security_group" "db_security_group" {
   }
 }
 
+resource "aws_db_subnet_group" "main_db_subnet_group" {
+  name       = "${var.product_name}-main-db-subnet-group"
+  subnet_ids = module.vpc.private_subnets.id
+
+  tags = {
+    "environment" = var.environment
+    "product"     = var.product_name
+  }
+}
+
 resource "aws_rds_cluster" "main_db_cluster" {
   engine         = "aurora-mysql"
   engine_version = "8.0.mysql_aurora.3.02.0"
@@ -70,7 +80,7 @@ resource "aws_rds_cluster" "main_db_cluster" {
   port              = 3306
 
   vpc_security_group_ids = [aws_security_group.db_security_group.id]
-  db_subnet_group_name   = module.vpc.database_subnet_group_name
+  db_subnet_group_name   = aws_db_subnet_group.main_db_subnet_group.name
   kms_key_id             = aws_kms_key.main_db_kms_key.arn
 
   lifecycle {
@@ -92,12 +102,11 @@ resource "aws_rds_cluster" "main_db_cluster" {
 
 
 resource "aws_rds_cluster_instance" "main_db_instance" {
-  count                  = 1
-  engine                 = aws_rds_cluster.main_db_cluster.engine
-  engine_version         = aws_rds_cluster.main_db_cluster.engine_version
-  cluster_identifier     = aws_rds_cluster.main_db_cluster.id
-  instance_class         = "db.t4g.micro"
-  db_subnet_group_name   = module.vpc.database_subnet_group_name
-  vpc_security_group_ids = [aws_security_group.db_security_group.id]
-  publicly_accessible    = false
+  count                = 1
+  engine               = aws_rds_cluster.main_db_cluster.engine
+  engine_version       = aws_rds_cluster.main_db_cluster.engine_version
+  cluster_identifier   = aws_rds_cluster.main_db_cluster.id
+  instance_class       = "db.t4g.micro"
+  db_subnet_group_name = aws_db_subnet_group.main_db_subnet_group.name
+  publicly_accessible  = false
 }
