@@ -21,7 +21,7 @@ resource "aws_kms_alias" "main_db_kms_key_alias" {
 }
 
 resource "aws_ssm_parameter" "main_db_parameter" {
-  name   = "${var.product_name}/api/main_db_password"
+  name   = "/${var.product_name}/api/main_db_password"
   type   = "SecureString"
   value  = aws_rds_cluster.main_db_cluster.master_password
   key_id = aws_kms_key.main_db_kms_key.id
