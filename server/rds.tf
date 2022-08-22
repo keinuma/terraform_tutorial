@@ -63,7 +63,7 @@ resource "aws_rds_cluster" "main_db_cluster" {
 
   database_name   = "rails_tutorial"
   master_username = "rails"
-  master_password = "${random_password.main_db_password.result}"
+  master_password = random_password.main_db_password.result
 
   apply_immediately = true
   storage_encrypted = true
@@ -92,11 +92,12 @@ resource "aws_rds_cluster" "main_db_cluster" {
 
 
 resource "aws_rds_cluster_instance" "main_db_instance" {
-  count                = 1
-  engine               = aws_rds_cluster.main_db_cluster.engine
-  engine_version       = aws_rds_cluster.main_db_cluster.engine_version
-  cluster_identifier   = aws_rds_cluster.main_db_cluster.id
-  instance_class       = "db.t4g.micro"
-  db_subnet_group_name = module.vpc.database_subnet_group_name
-  publicly_accessible  = false
+  count                  = 1
+  engine                 = aws_rds_cluster.main_db_cluster.engine
+  engine_version         = aws_rds_cluster.main_db_cluster.engine_version
+  cluster_identifier     = aws_rds_cluster.main_db_cluster.id
+  instance_class         = "db.t4g.micro"
+  db_subnet_group_name   = module.vpc.database_subnet_group_name
+  vpc_security_group_ids = [aws_security_group.db_security_group.id]
+  publicly_accessible    = false
 }
