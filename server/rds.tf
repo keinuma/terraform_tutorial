@@ -68,8 +68,9 @@ resource "aws_db_subnet_group" "main_db_subnet_group" {
 }
 
 resource "aws_rds_cluster" "main_db_cluster" {
-  engine      = "aurora-mysql"
-  engine_mode = "serverless"
+  engine         = "aurora-mysql"
+  engine_mode    = "serverless"
+  engine_version = "8.0.mysql_aurora.3.02.0"
 
   database_name   = "rails_tutorial"
   master_username = "rails"
