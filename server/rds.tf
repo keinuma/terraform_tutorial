@@ -58,7 +58,7 @@ resource "aws_security_group" "db_security_group" {
 }
 
 resource "aws_rds_cluster" "main_db_cluster" {
-  engine         = "aurora_mysql"
+  engine         = "aurora-mysql"
   engine_version = "8.0.mysql_aurora.3.02.0"
 
   database_name   = "rails_tutorial"
@@ -81,7 +81,7 @@ resource "aws_rds_cluster" "main_db_cluster" {
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0
-    min_capacity = 0
+    min_capacity = 0.5
   }
 
   tags = {
