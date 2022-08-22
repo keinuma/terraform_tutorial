@@ -80,9 +80,7 @@ resource "aws_rds_cluster" "main_db_cluster" {
   port              = 3306
 
   vpc_security_group_ids = [aws_security_group.db_security_group.id]
-    db_subnet_group_name   = aws_db_subnet_group.main_db_subnet_group.name 
   db_subnet_group_name   = aws_db_subnet_group.main_db_subnet_group.name
-    db_subnet_group_name   = aws_db_subnet_group.main_db_subnet_group.name 
   kms_key_id             = aws_kms_key.main_db_kms_key.arn
 
   lifecycle {
