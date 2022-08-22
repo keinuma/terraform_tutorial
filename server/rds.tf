@@ -34,7 +34,7 @@ resource "aws_ssm_parameter" "main_db_parameter" {
 resource "aws_ssm_parameter" "main_db_url" {
   name  = "/${var.product_name}/api/main_db_url"
   type  = "String"
-  value = aws_rds_cluster.this.endpoint
+  value = aws_rds_cluster.main_db_cluster.endpoint
 
   tags = {
     "environment" = var.environment
