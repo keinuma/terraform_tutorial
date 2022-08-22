@@ -43,6 +43,7 @@ data "aws_iam_policy_document" "api_parameters_permissions" {
     actions = [
       "ssm:GetParameters",
       "secretsmanager:GetSecretValue",
+      "kms:Decrypt"
     ]
     effect = "Allow"
     resources = [
