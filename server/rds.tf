@@ -1,4 +1,4 @@
-resource "randam_password" "main_db_password" {
+resource "random_password" "main_db_password" {
   length           = 42
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
