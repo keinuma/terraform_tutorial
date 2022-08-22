@@ -34,7 +34,7 @@ resource "aws_ssm_parameter" "main_db_parameter" {
 
 
 resource "aws_security_group" "db_security_group" {
-  name   = "${var.product_name}_api_security_group"
+  name   = "${var.product_name}_db_security_group"
   vpc_id = module.vpc.vpc_id
 
   ingress {
