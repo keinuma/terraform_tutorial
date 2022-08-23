@@ -43,11 +43,7 @@ data "aws_iam_policy_document" "api_parameters_permissions" {
     actions = [
       "ssm:GetParameters",
       "secretsmanager:GetSecretValue",
-      "kms:Decrypt",
-      "ssmmessages:CreateControlChannel",
-      "ssmmessages:CreateDataChannel",
-      "ssmmessages:OpenControlChannel",
-      "ssmmessages:OpenDataChannel"
+      "kms:Decrypt"
     ]
     effect = "Allow"
     resources = [
@@ -57,9 +53,33 @@ data "aws_iam_policy_document" "api_parameters_permissions" {
   }
 }
 
+resource "aws_iam_policy" "api_ecs_exec_ssm_policy" {
+  name   = "${var.product_name}-ApiECSExecSSMPolicy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.api_ecs_exec_ssm.json
+
+  tags = {
+    "environment" = var.environment
+    "product"     = var.product_name
+  }
+}
+data "aws_iam_policy_document" "api_ecs_exec_ssm" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel"
+    ]
+    resources = ["*"]
+  }
+}
+
 resource "aws_iam_role" "api_ecs_task_role" {
-  name               = "${var.product_name}-ApiTaskRole"
-  assume_role_policy = data.aws_iam_policy_document.ecs_task_role_assume_policy.json
+  name                = "${var.product_name}-ApiTaskRole"
+  assume_role_policy  = data.aws_iam_policy_document.ecs_task_role_assume_policy.json
+  managed_policy_arns = [aws_iam_policy.api_ecs_exec_ssm_policy.arn]
   tags = {
     "environment" = var.environment
     "product"     = var.product_name
